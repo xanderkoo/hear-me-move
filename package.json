@@ -1,0 +1,23 @@
+{
+  "name": "hear-me-move",
+  "version": "1.0.0",
+  "description": "dance",
+  "main": "app.js",
+  "dependencies": {
+    "wekinator": "^0.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xanderkoo/hear-me-move.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xanderkoo/hear-me-move/issues"
+  },
+  "homepage": "https://github.com/xanderkoo/hear-me-move#readme"
+}
