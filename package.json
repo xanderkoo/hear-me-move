@@ -4,6 +4,7 @@
   "description": "dance",
   "main": "app.js",
   "dependencies": {
+    "@tensorflow/tfjs-backend-webgl": "^3.4.0",
     "wekinator": "^0.2.2"
   },
   "devDependencies": {},
