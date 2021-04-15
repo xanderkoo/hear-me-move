@@ -6,7 +6,6 @@ var dgram = require('dgram');
 
 var remoteIp = '127.0.0.1';
 var remotePort = 3333; // set wekinator to listen to port 3333
-
 var udp = dgram.createSocket('udp4');
 
 /*
@@ -17,15 +16,17 @@ var udp = dgram.createSocket('udp4');
 
 server.listen(3000);
 
-sendHeartbeat = function(x, y) {
+sendHeartbeat = function(arr) {
   var buf;
+  var argsArr = [];
+  for (let i = 0; i < 34; i++) {
+    coord = arr[i];
+    argsArr.push({type: "float", value: coord});
+  }
+  console.log(argsArr);
   buf = osc.toBuffer({
     address: "/wek/inputs",
-    args: [
-      { type: "float", value: x },
-      { type: "float", value: y },
-      { type: "float", value: Math.random() }
-    ]
+    args: argsArr
   });
   return udp.send(buf, 0, buf.length, remotePort, "localhost");
 };
@@ -40,9 +41,9 @@ app.get('/poses.js', function (req, res) {
 
 io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
-  socket.on('mouseMoveEvent', function (data) {
+  socket.on('singlePose', function (data) {
     console.log(data);
-    sendHeartbeat(data.x, data.y);
+    sendHeartbeat(data);
   });
 });
 

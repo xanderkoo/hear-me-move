@@ -1,16 +1,5 @@
 const net = await posenet.load();
-
-var socket = io.connect('http://localhost:3000');
-var mx=0, my=0;
-document.onmousemove = function(e) {
-    mx = e.clientX/window.innerWidth;
-    my = e.clientY/window.innerHeight;
-    socket.emit('mouseMoveEvent', { x: mx, y:my });
-}
-socket.on('news', function (data) {
-    console.log(data);
-});
-
+var currentPose = null;
 
 // Code copied from https://stackoverflow.com/questions/32104975/html5-mirroring-webcam-canvas
 // Grab elements, create settings, etc.
@@ -71,12 +60,59 @@ function loop(){
 context.translate(canvas.width, 0);
 context.scale(-1,1);
 
+var socket = io.connect('http://localhost:3000');
+// var mx=0, my=0;
+// document.onmousemove = function(e) {
+//     mx = e.clientX/window.innerWidth;
+//     my = e.clientY/window.innerHeight;
+//     socket.emit('mouseMoveEvent', { x: mx, y:my });
+// }
+// socket.on('news', function (data) {
+//     console.log(data);
+// });
+
 async function estimatePose(e) {
     const pose = await net.estimateSinglePose(canvas, {
         flipHorizontal: false
     });
+    currentPose = pose;
     console.log(pose);
+    let poseArr = unpackPose(pose);
+    socket.emit('singlePose', poseArr);
     return pose;
 }
+
+function unpackPose(pose) {
+    let poseArr = []
+    console.log(pose.keypoints);
+    for (let i = 0; i < 17; i++) {
+        let keypoint = pose.keypoints[i];
+        console.log(keypoint);
+        poseArr.push(keypoint.position.x);
+        poseArr.push(keypoint.position.y);
+    }
+    // console.log(poseArr);
+    return poseArr;
+}
+
+/**
+ * nose
+ * leftEye
+ * rightEye
+ * leftEar
+ * rightEar
+ * leftShoulder
+ * rightShoulder
+ * leftElbow
+ * rightElbow
+ * leftWrist
+ * rightWrist
+ * leftHip
+ * rightHip
+ * leftKnee
+ * rightKnee
+ * leftAnkle
+ * rightAnkle
+ */
 
 document.onmousedown = estimatePose;
