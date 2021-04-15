@@ -1,6 +1,2 @@
 node_modules/
-dist/
-.cache/
-.parcel-cache/
-.yalc/
 .DS_Store

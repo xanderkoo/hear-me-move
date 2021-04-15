@@ -2,7 +2,7 @@
   "name": "hear-me-move",
   "version": "1.0.0",
   "description": "dance",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
     "@tensorflow/tfjs-backend-webgl": "^3.4.0",
     "express": "^4.17.1",
