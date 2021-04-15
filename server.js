@@ -15,7 +15,7 @@ var udp = dgram.createSocket('udp4');
   if you're using your browser locally this can be set to localhost
  */
 
-server.listen(1234);
+server.listen(3000);
 
 sendHeartbeat = function(x, y) {
   var buf;
@@ -32,6 +32,10 @@ sendHeartbeat = function(x, y) {
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/poses.js', function (req, res) {
+  res.sendFile(__dirname + '/poses.js');
 });
 
 io.on('connection', function (socket) {
