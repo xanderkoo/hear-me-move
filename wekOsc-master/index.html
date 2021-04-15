@@ -1,0 +1,26 @@
+<html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  
+
+  <script>
+    var socket = io.connect('http://localhost:3000');
+
+    var mx=0, my=0;
+
+    document.onmousemove = function(e) {
+      mx = e.clientX/window.innerWidth;
+      my = e.clientY/window.innerHeight;
+
+      socket.emit('mouseMoveEvent', { x: mx, y:my });
+    }
+    socket.on('news', function (data) {
+      console.log(data);
+    });
+
+
+  </script>
+</body>
+</html>
