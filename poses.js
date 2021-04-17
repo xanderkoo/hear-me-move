@@ -1,6 +1,9 @@
 const net = await posenet.load();
 var currentPose = null;
 
+/**
+ * CAMERA STUFF
+ */
 // Code copied from https://stackoverflow.com/questions/32104975/html5-mirroring-webcam-canvas
 // Grab elements, create settings, etc.
 var canvas = document.getElementById("myCanvas"),
@@ -60,16 +63,12 @@ function loop(){
 context.translate(canvas.width, 0);
 context.scale(-1,1);
 
+
+/**
+ * POSENET STUFF
+ */
+
 var socket = io.connect('http://localhost:3000');
-// var mx=0, my=0;
-// document.onmousemove = function(e) {
-//     mx = e.clientX/window.innerWidth;
-//     my = e.clientY/window.innerHeight;
-//     socket.emit('mouseMoveEvent', { x: mx, y:my });
-// }
-// socket.on('news', function (data) {
-//     console.log(data);
-// });
 
 async function estimatePose(e) {
     const pose = await net.estimateSinglePose(canvas, {
@@ -78,9 +77,23 @@ async function estimatePose(e) {
     currentPose = pose;
     console.log(pose);
     let poseArr = unpackPose(pose);
+    // Send this to local server
     socket.emit('singlePose', poseArr);
     return pose;
 }
+
+async function predictionLoop() {
+     // ~10 fps?
+    setTimeout(()=>{
+        estimatePose();
+        predictionLoop();
+    }, 33);
+}
+
+// Begin infinite prediction loop
+setTimeout(predictionLoop, 1000);
+
+// document.onmousedown = estimatePose;
 
 function unpackPose(pose) {
     let poseArr = []
@@ -88,8 +101,9 @@ function unpackPose(pose) {
     for (let i = 0; i < 17; i++) {
         let keypoint = pose.keypoints[i];
         console.log(keypoint);
-        poseArr.push(keypoint.position.x);
-        poseArr.push(keypoint.position.y);
+        poseArr.push(keypoint.position.x / 1280.0); // Normalize for FaceTime HD Camera
+        poseArr.push(keypoint.position.y / 720.0);  // Normalize for FaceTime HD Camera
+        poseArr.push(keypoint.score);
     }
     // console.log(poseArr);
     return poseArr;
@@ -115,4 +129,3 @@ function unpackPose(pose) {
  * rightAnkle
  */
 
-document.onmousedown = estimatePose;

@@ -19,7 +19,7 @@ server.listen(3000);
 sendHeartbeat = function(arr) {
   var buf;
   var argsArr = [];
-  for (let i = 0; i < 34; i++) {
+  for (let i = 0; i < 51; i++) {
     coord = arr[i];
     argsArr.push({type: "float", value: coord});
   }
