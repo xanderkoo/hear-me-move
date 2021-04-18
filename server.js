@@ -1,3 +1,7 @@
+/**
+ * Code mostly copied from @noisyneuron https://github.com/noisyneuron/wekOsc
+ */
+
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);

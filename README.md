@@ -4,7 +4,9 @@ by [Cassie Wang](https://github.com/caswang0117), [Eric](https://github.com/eric
 
 Connects MediaPipe PoseNet to Wekinator input.
 
-TODO: add posenet skeleton to the visual webcam feed
+TODO: Add PoseNet skeleton to the visual webcam feed, make a new beat machine for Wekinator
+
+Credit: We used code from @noisyneuron's [repo](https://github.com/noisyneuron/wekOsc) to sent data from the browser to Wekinator.
 
 ## Getting Started
 
