@@ -1,5 +1,5 @@
 /**
- * Code mostly copied from @noisyneuron https://github.com/noisyneuron/wekOsc
+ * Code adapted with permission from @noisyneuron https://github.com/noisyneuron/wekOsc
  */
 
 var app = require('express')();
@@ -39,8 +39,8 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/poses.js', function (req, res) {
-  res.sendFile(__dirname + '/poses.js');
+app.get('/:filename', function (req, res) {
+  res.sendFile(__dirname + '/' + req.params.filename);
 });
 
 io.on('connection', function (socket) {

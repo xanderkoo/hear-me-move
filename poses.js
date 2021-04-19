@@ -1,3 +1,5 @@
+import * as sketch from "./sketch.js"
+
 const net = await posenet.load();
 var currentPose = null;
 
@@ -6,7 +8,7 @@ var currentPose = null;
  */
 // Code copied from https://stackoverflow.com/questions/32104975/html5-mirroring-webcam-canvas
 // Grab elements, create settings, etc.
-var canvas = document.getElementById("myCanvas"),
+var canvas = document.getElementById("webcamCanvas"),
     context = canvas.getContext("2d"),
     // we don't need to append the video to the document
     video = document.createElement("video"),
@@ -54,9 +56,19 @@ navigator.getUserMedia(videoObj, function(stream) {
     video.play();
 }, errBack);
 
+var pose = null;
+
 function loop(){
     context.drawImage(video, crop.x, crop.y, crop.w, crop.h, 0, 0, canvas.width, canvas.height);
+    drawWireFrame(pose);
     raf = requestAnimationFrame(loop);
+}
+
+function drawWireFrame(pose) {
+    if (pose !== null) {
+        sketch.drawKeypoints(pose.keypoints, 0, context);
+        sketch.drawSkeleton(pose.keypoints, 0, context);
+    }
 }
 
 // now that our video is drawn correctly, we can do...
@@ -71,11 +83,11 @@ context.scale(-1,1);
 var socket = io.connect('http://localhost:3000');
 
 async function estimatePose(e) {
-    const pose = await net.estimateSinglePose(canvas, {
+    pose = await net.estimateSinglePose(canvas, {
         flipHorizontal: false
     });
     currentPose = pose;
-    console.log(pose);
+    // console.log(pose);
     let poseArr = unpackPose(pose);
     // Send this to local server
     socket.emit('singlePose', poseArr);
@@ -83,7 +95,7 @@ async function estimatePose(e) {
 }
 
 async function predictionLoop() {
-     // ~10 fps?
+     // ~30 fps?
     setTimeout(()=>{
         estimatePose();
         predictionLoop();
@@ -92,15 +104,16 @@ async function predictionLoop() {
 
 // Begin infinite prediction loop
 setTimeout(predictionLoop, 1000);
+sketch.setCanvasAndPoseNet(canvas, posenet);
 
 // document.onmousedown = estimatePose;
 
 function unpackPose(pose) {
     let poseArr = []
-    console.log(pose.keypoints);
+    // console.log(pose.keypoints);
     for (let i = 0; i < 17; i++) {
         let keypoint = pose.keypoints[i];
-        console.log(keypoint);
+        // console.log(keypoint);
         poseArr.push(keypoint.position.x / 1280.0); // Normalize for FaceTime HD Camera
         poseArr.push(keypoint.position.y / 720.0);  // Normalize for FaceTime HD Camera
         poseArr.push(keypoint.score);
