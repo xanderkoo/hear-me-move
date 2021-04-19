@@ -1,3 +1,10 @@
+/**
+ * Adapted from "Simple continuously-controlled drum machine" example: http://www.wekinator.org/examples/#Processing_animation_audio
+ *
+ * Requires Minim: https://github.com/ddf/Minim
+ * Follow the instructions given in the README
+ */
+
 import processing.opengl.*;
 
 /**
@@ -60,7 +67,7 @@ ArrayList<Rect> buttons = new ArrayList<Rect>();
 
 // randomSeed(4206);
 
-int bpm = 120;
+int bpm = 80;
 
 int beat; // which beat we're on
 
@@ -151,7 +158,7 @@ void setup()
 {
   size(395, 625);
   
-    //Initialize OSC communication
+  //Initialize OSC communication
   oscP5 = new OscP5(this,12000); //listen for OSC messages on port 12000 (Wekinator default)
   dest = new NetAddress("127.0.0.1",6448); //send messages back to Wekinator on port 6448, localhost (this machine) (default)
   
@@ -162,17 +169,17 @@ void setup()
   // this will help ensure we have enough voices to handle even
   // very fast tempos.
   bass1  = new Sampler( "808 1.wav", 4, minim );
-  bass2 = new Sampler( "808 2.wav", 4, minim );
+  bass2  = new Sampler( "808 2.wav", 4, minim );
   clap   = new Sampler( "Clap.wav", 4, minim );
-  hat1  = new Sampler( "Hat.wav", 4, minim );
-  hat2 = new Sampler( "Hat 2.wav", 4, minim );
-  kick1   = new Sampler( "Kick 1.wav", 4, minim );
+  hat1   = new Sampler( "Hat.wav", 4, minim );
+  hat2   = new Sampler( "Hat 2.wav", 4, minim );
+  kick1  = new Sampler( "Kick 1.wav", 4, minim );
   kick2  = new Sampler( "Kick 2.wav", 4, minim );
-  ohat = new Sampler( "Open Hat.wav", 4, minim );
+  ohat   = new Sampler( "Open Hat.wav", 4, minim );
   rim1   = new Sampler( "Rimshot 1.wav", 4, minim );
-  rim2  = new Sampler( "Rimshot 2.wav", 4, minim );
+  rim2   = new Sampler( "Rimshot 2.wav", 4, minim );
   snare1 = new Sampler( "Snare 1.wav", 4, minim );
-  snare2   = new Sampler( "Snare 2.wav", 4, minim );
+  snare2 = new Sampler( "Snare 2.wav", 4, minim );
   
   // patch samplers to the outputbass1  = new Sampler( "BD.wav", 4, minim );
   bass1.patch( out );
@@ -190,16 +197,16 @@ void setup()
   
   for (int i = 0; i < 16; i++)
   {
-    buttons.add( new Rect(10+i*24, 50, bass1Row, i ) );
-    buttons.add( new Rect(10+i*24, 100, bass2Row, i ) );
-    buttons.add( new Rect(10+i*24, 150, clapRow, i ) );
-    buttons.add( new Rect(10+i*24, 200, hat1Row, i ) );
-    buttons.add( new Rect(10+i*24, 250, hat2Row, i ) );
-    buttons.add( new Rect(10+i*24, 300, kick1Row, i ) );
-    buttons.add( new Rect(10+i*24, 350, kick2Row, i ) );
-    buttons.add( new Rect(10+i*24, 400, ohatRow, i ) );
-    buttons.add( new Rect(10+i*24, 450, rim1Row, i ) );
-    buttons.add( new Rect(10+i*24, 500, rim2Row, i ) );
+    buttons.add( new Rect(10+i*24, 50,  bass1Row,  i ) );
+    buttons.add( new Rect(10+i*24, 100, bass2Row,  i ) );
+    buttons.add( new Rect(10+i*24, 150, clapRow,   i ) );
+    buttons.add( new Rect(10+i*24, 200, hat1Row,   i ) );
+    buttons.add( new Rect(10+i*24, 250, hat2Row,   i ) );
+    buttons.add( new Rect(10+i*24, 300, kick1Row,  i ) );
+    buttons.add( new Rect(10+i*24, 350, kick2Row,  i ) );
+    buttons.add( new Rect(10+i*24, 400, ohatRow,   i ) );
+    buttons.add( new Rect(10+i*24, 450, rim1Row,   i ) );
+    buttons.add( new Rect(10+i*24, 500, rim2Row,   i ) );
     buttons.add( new Rect(10+i*24, 550, snare1Row, i ) );
     buttons.add( new Rect(10+i*24, 600, snare2Row, i ) );
   }
@@ -252,7 +259,7 @@ void mousePressed()
 //This is called automatically when OSC message is received
 void oscEvent(OscMessage theOscMessage) {
  if (theOscMessage.checkAddrPattern("/wek/outputs")==true) {
-     if(theOscMessage.checkTypetag("fff")) { //Now looking for 2 parameters
+     if(theOscMessage.checkTypetag("ffffffffffff")) { //Now looking for 12 parameters
         float p1 = theOscMessage.get(0).floatValue(); //get 1st parameter
         float p2 = theOscMessage.get(1).floatValue(); //get 2nd parameter
         float p3 = theOscMessage.get(2).floatValue(); //get 3rd parameters
@@ -289,210 +296,20 @@ void updateDrums(float p1,
                  float p11,
                  float p12) {
 
-  bass1Row[0] = drumRowGenerator(p1);
-  bass1Row[1] = drumRowGenerator(p1);
-  bass1Row[2] = drumRowGenerator(p1);
-  bass1Row[3] = drumRowGenerator(p1);
-  bass1Row[4] = drumRowGenerator(p1);
-  bass1Row[5] = drumRowGenerator(p1);
-  bass1Row[6] = drumRowGenerator(p1);
-  bass1Row[7] = drumRowGenerator(p1);
-  bass1Row[8] = drumRowGenerator(p1);
-  bass1Row[9] = drumRowGenerator(p1);
-  bass1Row[10] = drumRowGenerator(p1);
-  bass1Row[11] = drumRowGenerator(p1);
-  bass1Row[12] = drumRowGenerator(p1);
-  bass1Row[13] = drumRowGenerator(p1);
-  bass1Row[14] = drumRowGenerator(p1);
-  bass1Row[15] = drumRowGenerator(p1);
-  
-  bass2Row[0] = drumRowGenerator(p2);
-  bass2Row[1] = drumRowGenerator(p2);
-  bass2Row[2] = drumRowGenerator(p2);
-  bass2Row[3] = drumRowGenerator(p2);
-  bass2Row[4] = drumRowGenerator(p2);
-  bass2Row[5] = drumRowGenerator(p2);
-  bass2Row[6] = drumRowGenerator(p2);
-  bass2Row[7] = drumRowGenerator(p2);
-  bass2Row[8] = drumRowGenerator(p2);
-  bass2Row[9] = drumRowGenerator(p2);
-  bass2Row[10] = drumRowGenerator(p2);
-  bass2Row[11] = drumRowGenerator(p2);
-  bass2Row[12] = drumRowGenerator(p2);
-  bass2Row[13] = drumRowGenerator(p2);
-  bass2Row[14] = drumRowGenerator(p2);
-  bass2Row[15] = drumRowGenerator(p2);;
-  
-  clapRow[0] = drumRowGenerator(p3);
-  clapRow[1] = drumRowGenerator(p3);
-  clapRow[2] = drumRowGenerator(p3);
-  clapRow[3] = drumRowGenerator(p3);
-  clapRow[4] = drumRowGenerator(p3);
-  clapRow[5] = drumRowGenerator(p3);
-  clapRow[6] = drumRowGenerator(p3);
-  clapRow[7] = drumRowGenerator(p3);
-  clapRow[8] = drumRowGenerator(p3);
-  clapRow[9] = drumRowGenerator(p3);
-  clapRow[10] = drumRowGenerator(p3);
-  clapRow[11] = drumRowGenerator(p3);
-  clapRow[12] = drumRowGenerator(p3);
-  clapRow[13] = drumRowGenerator(p3);
-  clapRow[14] = drumRowGenerator(p3);
-  clapRow[15] = drumRowGenerator(p3);
-   
-  hat1Row[0] = drumRowGenerator(p4);
-  hat1Row[1] = drumRowGenerator(p4);
-  hat1Row[2] = drumRowGenerator(p4);
-  hat1Row[3] = drumRowGenerator(p4);
-  hat1Row[4] = drumRowGenerator(p4);
-  hat1Row[5] = drumRowGenerator(p4);
-  hat1Row[6] = drumRowGenerator(p4);
-  hat1Row[7] = drumRowGenerator(p4);
-  hat1Row[8] = drumRowGenerator(p4);
-  hat1Row[9] = drumRowGenerator(p4);
-  hat1Row[10] = drumRowGenerator(p4);
-  hat1Row[11] = drumRowGenerator(p4);
-  hat1Row[12] = drumRowGenerator(p4);
-  hat1Row[13] = drumRowGenerator(p4);
-  hat1Row[14] = drumRowGenerator(p4);
-  hat1Row[15] = drumRowGenerator(p4);
-   
-  hat2Row[0] = drumRowGenerator(p5);
-  hat2Row[1] = drumRowGenerator(p5);
-  hat2Row[2] = drumRowGenerator(p5);
-  hat2Row[3] = drumRowGenerator(p5);
-  hat2Row[4] = drumRowGenerator(p5);
-  hat2Row[5] = drumRowGenerator(p5);
-  hat2Row[6] = drumRowGenerator(p5);
-  hat2Row[7] = drumRowGenerator(p5);
-  hat2Row[8] = drumRowGenerator(p5);
-  hat2Row[9] = drumRowGenerator(p5);
-  hat2Row[10] = drumRowGenerator(p5);
-  hat2Row[11] = drumRowGenerator(p5);
-  hat2Row[12] = drumRowGenerator(p5);
-  hat2Row[13] = drumRowGenerator(p5);
-  hat2Row[14] = drumRowGenerator(p5);
-  hat2Row[15] = drumRowGenerator(p5);
-  
-  kick1Row[0] = drumRowGenerator(p6);
-  kick1Row[1] = drumRowGenerator(p6);
-  kick1Row[2] = drumRowGenerator(p6);
-  kick1Row[3] = drumRowGenerator(p6);
-  kick1Row[4] = drumRowGenerator(p6);
-  kick1Row[5] = drumRowGenerator(p6);
-  kick1Row[6] = drumRowGenerator(p6);
-  kick1Row[7] = drumRowGenerator(p6);
-  kick1Row[8] = drumRowGenerator(p6);
-  kick1Row[9] = drumRowGenerator(p6);
-  kick1Row[10] = drumRowGenerator(p6);
-  kick1Row[11] = drumRowGenerator(p6);
-  kick1Row[12] = drumRowGenerator(p6);
-  kick1Row[13] = drumRowGenerator(p6);
-  kick1Row[14] = drumRowGenerator(p6);
-  kick1Row[15] = drumRowGenerator(p6);
-  
-  kick2Row[0] = drumRowGenerator(p7);
-  kick2Row[1] = drumRowGenerator(p7);
-  kick2Row[2] = drumRowGenerator(p7);
-  kick2Row[3] = drumRowGenerator(p7);
-  kick2Row[4] = drumRowGenerator(p7);
-  kick2Row[5] = drumRowGenerator(p7);
-  kick2Row[6] = drumRowGenerator(p7);
-  kick2Row[7] = drumRowGenerator(p7);
-  kick2Row[8] = drumRowGenerator(p7);
-  kick2Row[9] = drumRowGenerator(p7);
-  kick2Row[10] = drumRowGenerator(p7);
-  kick2Row[11] = drumRowGenerator(p7);
-  kick2Row[12] = drumRowGenerator(p7);
-  kick2Row[13] = drumRowGenerator(p7);
-  kick2Row[14] = drumRowGenerator(p7);
-  kick2Row[15] = drumRowGenerator(p7);
-   
-  ohatRow[0] = drumRowGenerator(p8);
-  ohatRow[1] = drumRowGenerator(p8);
-  ohatRow[2] = drumRowGenerator(p8);
-  ohatRow[3] = drumRowGenerator(p8);
-  ohatRow[4] = drumRowGenerator(p8);
-  ohatRow[5] = drumRowGenerator(p8);
-  ohatRow[6] = drumRowGenerator(p8);
-  ohatRow[7] = drumRowGenerator(p8);
-  ohatRow[8] = drumRowGenerator(p8);
-  ohatRow[9] = drumRowGenerator(p8);
-  ohatRow[10] = drumRowGenerator(p8);
-  ohatRow[11] = drumRowGenerator(p8);
-  ohatRow[12] = drumRowGenerator(p8);
-  ohatRow[13] = drumRowGenerator(p8);
-  ohatRow[14] = drumRowGenerator(p8);
-  ohatRow[15] = drumRowGenerator(p8);
-  
-  rim1Row[0] = drumRowGenerator(p9);
-  rim1Row[1] = drumRowGenerator(p9);
-  rim1Row[2] = drumRowGenerator(p9);
-  rim1Row[3] = drumRowGenerator(p9);
-  rim1Row[4] = drumRowGenerator(p9);
-  rim1Row[5] = drumRowGenerator(p9);
-  rim1Row[6] = drumRowGenerator(p9);
-  rim1Row[7] = drumRowGenerator(p9);
-  rim1Row[8] = drumRowGenerator(p9);
-  rim1Row[9] = drumRowGenerator(p9);
-  rim1Row[10] = drumRowGenerator(p9);
-  rim1Row[11] = drumRowGenerator(p9);
-  rim1Row[12] = drumRowGenerator(p9);
-  rim1Row[13] = drumRowGenerator(p9);
-  rim1Row[14] = drumRowGenerator(p9);
-  rim1Row[15] = drumRowGenerator(p9);
-   
-  rim2Row[0] = drumRowGenerator(p10);
-  rim2Row[1] = drumRowGenerator(p10);
-  rim2Row[2] = drumRowGenerator(p10);
-  rim2Row[3] = drumRowGenerator(p10);
-  rim2Row[4] = drumRowGenerator(p10);
-  rim2Row[5] = drumRowGenerator(p10);
-  rim2Row[6] = drumRowGenerator(p10);
-  rim2Row[7] = drumRowGenerator(p10);
-  rim2Row[8] = drumRowGenerator(p10);
-  rim2Row[9] = drumRowGenerator(p10);
-  rim2Row[10] = drumRowGenerator(p10);
-  rim2Row[11] = drumRowGenerator(p10);
-  rim2Row[12] = drumRowGenerator(p10);
-  rim2Row[13] = drumRowGenerator(p10);
-  rim2Row[14] = drumRowGenerator(p10);
-  rim2Row[15] = drumRowGenerator(p10);
-   
-  snare1Row[0] = drumRowGenerator(p11);
-  snare1Row[1] = drumRowGenerator(p11);
-  snare1Row[2] = drumRowGenerator(p11);
-  snare1Row[3] = drumRowGenerator(p11);
-  snare1Row[4] = drumRowGenerator(p11);
-  snare1Row[5] = drumRowGenerator(p11);
-  snare1Row[6] = drumRowGenerator(p11);
-  snare1Row[7] = drumRowGenerator(p11);
-  snare1Row[8] = drumRowGenerator(p11);
-  snare1Row[9] = drumRowGenerator(p11);
-  snare1Row[10] = drumRowGenerator(p11);
-  snare1Row[11] = drumRowGenerator(p11);
-  snare1Row[12] = drumRowGenerator(p11);
-  snare1Row[13] = drumRowGenerator(p11);
-  snare1Row[14] = drumRowGenerator(p11);
-  snare1Row[15] = drumRowGenerator(p11);
-   
-  snare2Row[0] = drumRowGenerator(p12);
-  snare2Row[1] = drumRowGenerator(p12);
-  snare2Row[2] = drumRowGenerator(p12);
-  snare2Row[3] = drumRowGenerator(p12);
-  snare2Row[4] = drumRowGenerator(p12);
-  snare2Row[5] = drumRowGenerator(p12);
-  snare2Row[6] = drumRowGenerator(p12);
-  snare2Row[7] = drumRowGenerator(p12);
-  snare2Row[8] = drumRowGenerator(p12);
-  snare2Row[9] = drumRowGenerator(p12);
-  snare2Row[10] = drumRowGenerator(p12);
-  snare2Row[11] = drumRowGenerator(p12);
-  snare2Row[12] = drumRowGenerator(p12);
-  snare2Row[13] = drumRowGenerator(p12);
-  snare2Row[14] = drumRowGenerator(p12);
-  snare2Row[15] = drumRowGenerator(p12);
-
+  for (int i = 0; i < 16; i++) {
+    bass1Row[i] = drumRowGenerator(p1);
+    bass2Row[i] = drumRowGenerator(p2);
+    clapRow[i] = drumRowGenerator(p3);
+    hat1Row[i] = drumRowGenerator(p4);
+    hat2Row[i] = drumRowGenerator(p5);
+    kick1Row[i] = drumRowGenerator(p6);
+    kick2Row[i] = drumRowGenerator(p7);
+    ohatRow[i] = drumRowGenerator(p8);
+    rim1Row[i] = drumRowGenerator(p9);
+    rim2Row[i] = drumRowGenerator(p10);
+    snare1Row[i] = drumRowGenerator(p11);
+    snare2Row[i] = drumRowGenerator(p12);
+  }
 }
 
 boolean drumRowGenerator(float p) {

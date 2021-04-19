@@ -1,3 +1,5 @@
 node_modules/
 Processing_Drum_12ContinuousOutputs/libraries/
 .DS_Store
+*.autosave
+libraries/
