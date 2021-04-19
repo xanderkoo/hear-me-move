@@ -12,11 +12,10 @@ var remoteIp = '127.0.0.1';
 var remotePort = 3333; // set wekinator to listen to port 3333
 var udp = dgram.createSocket('udp4');
 
-/*
- using ip 192.168.1.150 .. change this for your setup
-  in this file as well as index.html
-  if you're using your browser locally this can be set to localhost
- */
+/**
+ * using localhost
+ * change this for your setup in this file as well as index.html
+*/
 
 server.listen(3000);
 
@@ -50,5 +49,3 @@ io.on('connection', function (socket) {
     sendHeartbeat(data);
   });
 });
-
-

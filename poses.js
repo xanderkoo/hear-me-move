@@ -6,33 +6,35 @@ var currentPose = null;
 /**
  * CAMERA STUFF
  */
-// Code copied from https://stackoverflow.com/questions/32104975/html5-mirroring-webcam-canvas
+// Code adapted from https://stackoverflow.com/questions/32104975/html5-mirroring-webcam-canvas
 // Grab elements, create settings, etc.
-var canvas = document.getElementById("webcamCanvas"),
-    context = canvas.getContext("2d"),
-    // we don't need to append the video to the document
-    video = document.createElement("video"),
-    videoObj = 
-    navigator.getUserMedia || navigator.mozGetUserMedia ? // our browser is up to date with specs ?
-        { 
-        video: {
-            width: { min: 1280,  max: 1280 },
-            height: { min: 720,  max: 720 },
-            require: ['width', 'height']
-            }
-        } : {
-        video: {
-            mandatory: {
-                minWidth: 1280,
-                minHeight: 720,
-                maxWidth: 1280,
-                maxHeight: 720
-            }
+var canvas = document.getElementById("webcamCanvas");
+var context = canvas.getContext("2d");
+// we don't need to append the video to the document
+var video = document.createElement("video");
+var videoObj = navigator.getUserMedia || navigator.mozGetUserMedia ? { 
+    video: {
+        width: { min: 1280,  max: 1280 },
+        height: { min: 720,  max: 720 },
+        require: ['width', 'height']
         }
-},
-errBack = function(error) {
+    } :
+    {
+    video: {
+        mandatory: {
+            minWidth: 1280,
+            minHeight: 720,
+            maxWidth: 1280,
+            maxHeight: 720
+        }
+    }
+};
+
+// Error message callback
+function errBack (error) {
     console.log("Video capture error: ", error.code); 
 };
+
 // create a crop object that will be calculated on load of the video
 var crop;
 // create a variable that will enable us to stop the loop.
@@ -56,29 +58,28 @@ navigator.getUserMedia(videoObj, function(stream) {
     video.play();
 }, errBack);
 
+// Variable that holds the latest pose prediction
 var pose = null;
 
+/**
+ * Animation frame callback for drawing the webcam feed + wireframe onto the canvas
+ */
 function loop(){
     context.drawImage(video, crop.x, crop.y, crop.w, crop.h, 0, 0, canvas.width, canvas.height);
     drawWireFrame(pose);
     raf = requestAnimationFrame(loop);
 }
 
+/**
+ * Takes a pose prediction from PoseNet and calls functions in ./sketch.js to draw the wireframe onto the canvas
+ * @param {*} pose 
+ */
 function drawWireFrame(pose) {
     if (pose !== null) {
         sketch.drawKeypoints(pose.keypoints, 0, context);
         sketch.drawSkeleton(pose.keypoints, 0, context);
     }
 }
-
-// now that our video is drawn correctly, we can do...
-context.translate(canvas.width, 0);
-context.scale(-1,1);
-
-
-/**
- * POSENET STUFF
- */
 
 var socket = io.connect('http://localhost:3000');
 
@@ -94,6 +95,9 @@ async function estimatePose(e) {
     return pose;
 }
 
+/**
+ * Async recursive call that waits 33ms to update a pose prediction, for ~30fps
+ */
 async function predictionLoop() {
      // ~30 fps?
     setTimeout(()=>{
@@ -102,12 +106,10 @@ async function predictionLoop() {
     }, 33);
 }
 
-// Begin infinite prediction loop
-setTimeout(predictionLoop, 1000);
-sketch.setCanvasAndPoseNet(canvas, posenet);
-
-// document.onmousedown = estimatePose;
-
+/**
+ * @param {*} pose PoseNet single pose prediction 
+ * @returns flattened array (length=51) of keypoints and confidence scores
+ */
 function unpackPose(pose) {
     let poseArr = []
     // console.log(pose.keypoints);
@@ -122,23 +124,14 @@ function unpackPose(pose) {
     return poseArr;
 }
 
-/**
- * nose
- * leftEye
- * rightEye
- * leftEar
- * rightEar
- * leftShoulder
- * rightShoulder
- * leftElbow
- * rightElbow
- * leftWrist
- * rightWrist
- * leftHip
- * rightHip
- * leftKnee
- * rightKnee
- * leftAnkle
- * rightAnkle
- */
+function begin() {
+    // Give sketching script access to the canvas/posenet
+    sketch.setCanvasAndPoseNet(canvas, posenet);
+    // Begin infinite prediction loop
+    setTimeout(predictionLoop, 1000);
+    // mirror webcam video feed
+    context.translate(canvas.width, 0);
+    context.scale(-1,1);
+}
 
+begin();

@@ -4,11 +4,9 @@
   "description": "dance",
   "main": "server.js",
   "dependencies": {
-    "@tensorflow/tfjs-backend-webgl": "^3.4.0",
     "express": "^4.17.1",
     "osc-min": "^1.1.2",
-    "socket.io": "^4.0.1",
-    "wekinator": "^0.2.2"
+    "socket.io": "^4.0.1"
   },
   "devDependencies": {},
   "scripts": {

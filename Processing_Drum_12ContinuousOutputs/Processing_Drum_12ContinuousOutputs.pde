@@ -260,21 +260,12 @@ void mousePressed()
 void oscEvent(OscMessage theOscMessage) {
  if (theOscMessage.checkAddrPattern("/wek/outputs")==true) {
      if(theOscMessage.checkTypetag("ffffffffffff")) { //Now looking for 12 parameters
-        float p1 = theOscMessage.get(0).floatValue(); //get 1st parameter
-        float p2 = theOscMessage.get(1).floatValue(); //get 2nd parameter
-        float p3 = theOscMessage.get(2).floatValue(); //get 3rd parameters
-        float p4 = theOscMessage.get(3).floatValue(); //get 4th parameter
-        float p5 = theOscMessage.get(4).floatValue(); //get 5th parameter
-        float p6 = theOscMessage.get(5).floatValue(); //get 6th parameters
-        float p7 = theOscMessage.get(6).floatValue(); //get 7th parameter
-        float p8 = theOscMessage.get(7).floatValue(); //get 8th parameter
-        float p9 = theOscMessage.get(8).floatValue(); //get 9th parameters
-        float p10 = theOscMessage.get(9).floatValue(); //get 10th parameter
-        float p11 = theOscMessage.get(10).floatValue(); //get 11th parameter
-        float p12 = theOscMessage.get(11).floatValue(); //get 12th parameters
-        // lmao idk how this works yolo
+        float[] params = new float[12];
+        for (int i = 0; i < 12; i++) {
+          params[i] = theOscMessage.get(i).floatValue();
+        }
         
-        updateDrums(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        updateDrums(params);
         
         println("Received new params value from Wekinator");  
       } else {
@@ -283,32 +274,21 @@ void oscEvent(OscMessage theOscMessage) {
  }
 }
 
-void updateDrums(float p1,
-                 float p2,
-                 float p3,
-                 float p4,
-                 float p5,
-                 float p6,
-                 float p7,
-                 float p8,
-                 float p9,
-                 float p10,
-                 float p11,
-                 float p12) {
+void updateDrums(float[] params) {
 
   for (int i = 0; i < 16; i++) {
-    bass1Row[i] = drumRowGenerator(p1);
-    bass2Row[i] = drumRowGenerator(p2);
-    clapRow[i] = drumRowGenerator(p3);
-    hat1Row[i] = drumRowGenerator(p4);
-    hat2Row[i] = drumRowGenerator(p5);
-    kick1Row[i] = drumRowGenerator(p6);
-    kick2Row[i] = drumRowGenerator(p7);
-    ohatRow[i] = drumRowGenerator(p8);
-    rim1Row[i] = drumRowGenerator(p9);
-    rim2Row[i] = drumRowGenerator(p10);
-    snare1Row[i] = drumRowGenerator(p11);
-    snare2Row[i] = drumRowGenerator(p12);
+    bass1Row[i] = drumRowGenerator(params[0]);
+    bass2Row[i] = drumRowGenerator(params[1]);
+    clapRow[i] = drumRowGenerator(params[2]);
+    hat1Row[i] = drumRowGenerator(params[3]);
+    hat2Row[i] = drumRowGenerator(params[4]);
+    kick1Row[i] = drumRowGenerator(params[5]);
+    kick2Row[i] = drumRowGenerator(params[6]);
+    ohatRow[i] = drumRowGenerator(params[7]);
+    rim1Row[i] = drumRowGenerator(params[8]);
+    rim2Row[i] = drumRowGenerator(params[9]);
+    snare1Row[i] = drumRowGenerator(params[10]);
+    snare2Row[i] = drumRowGenerator(params[11]);
   }
 }
 
