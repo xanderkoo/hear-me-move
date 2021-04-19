@@ -27,7 +27,7 @@ sendHeartbeat = function(arr) {
     coord = arr[i];
     argsArr.push({type: "float", value: coord});
   }
-  console.log(argsArr);
+  // console.log(argsArr);
   buf = osc.toBuffer({
     address: "/wek/inputs",
     args: argsArr
@@ -46,7 +46,7 @@ app.get('/:filename', function (req, res) {
 io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
   socket.on('singlePose', function (data) {
-    console.log(data);
+    // console.log(data);
     sendHeartbeat(data);
   });
 });
