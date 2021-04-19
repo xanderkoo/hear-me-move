@@ -4,9 +4,11 @@ by [Cassie Wang](https://github.com/caswang0117), [Eric](https://github.com/eric
 
 Connects MediaPipe PoseNet to Wekinator input.
 
-TODO: Add PoseNet skeleton to the visual webcam feed, make a new beat machine for Wekinator
-
-Credit: We used code from @noisyneuron's [repo](https://github.com/noisyneuron/wekOsc) to sent data from the browser to Wekinator.
+Credit:
+- `server.js` is adapted from @noisyneuron's [repo](https://github.com/noisyneuron/wekOsc) to sent data from the browser to Wekinator
+- `sketch.js` is adapted from the [Google Creative Lab PoseNet Sketchbook](https://github.com/googlecreativelab/posenet-sketchbook) by [Maya Man](https://github.com/mayaman) (chirp chirp!)
+- The code for showing the webcam feed in `poses.js` is adapted from this [Stack Overflow answer](https://stackoverflow.com/a/32108930)
+- The audio samples for the beat machine come from the [Genius Home Studio beat pack](https://homestudio.genius.com/)
 
 ## Getting Started
 
