@@ -167,14 +167,15 @@ async function predictionLoop() {
     }, 33);
 }
 
+var minConfidence = 0.5
+
 function filterPose(pose) {
     for (let i = 0; i < 17; i++) {
-        filter[i].update(pose.keypoints[i].position.x, pose.keypoints[i].position.y);
-        // console.log(filter[i].getX(), pose.keypoints[i].position.x);
-        // pose.keypoints[i].position.x = filter[i].getX();
-        // pose.keypoints[i].position.y = filter[i].getY();
-        pose.keypoints[i].position.x = filter[i].getX();
-        pose.keypoints[i].position.y = filter[i].getY();
+        if (pose.keypoints[i].score > minConfidence) {
+            filter[i].update(pose.keypoints[i].position.x, pose.keypoints[i].position.y);
+        }
+        pose.keypoints[i].position.x = filter[i].getX() || 0;
+        pose.keypoints[i].position.y = filter[i].getY() || 0;
     }
     return pose;
 }

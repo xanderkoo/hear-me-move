@@ -33,22 +33,26 @@ function toTuple({y, x}) {
 }
 
 export function drawPoint(ctx, y, x, r, color) {
-  ctx.beginPath();
-  ctx.arc(videoWidth - x, y, r, 0, 2 * Math.PI);
-  ctx.fillStyle = color;
-  ctx.fill();
+  if (y !== 0 || x !== 0) {
+    ctx.beginPath();
+    ctx.arc(videoWidth - x, y, r, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
 }
 
 /**
  * Draws a line on a canvas, i.e. a joint
  */
 export function drawSegment([ay, ax], [by, bx], color, scale, ctx) {
-  ctx.beginPath();
-  ctx.moveTo(videoWidth - ax * scale, ay * scale);
-  ctx.lineTo(videoWidth - bx * scale, by * scale);
-  ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = color;
-  ctx.stroke();
+  if (ay !== 0 && ax !== 0 && by !== 0 && bx !== 0) {
+    ctx.beginPath();
+    ctx.moveTo(videoWidth - ax * scale, ay * scale);
+    ctx.lineTo(videoWidth - bx * scale, by * scale);
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+  }
 }
 
 /**
