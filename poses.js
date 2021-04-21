@@ -100,6 +100,15 @@ FilteredCoordinate.prototype.getY = function() {
     return this.totalY / this.dataX.length;
 }
 
+FilteredCoordinate.prototype.evict = function() {
+    if (this.dataX.length > 0) {
+        this.totalX = this.totalX - this.dataX.shift();
+    }
+    if (this.dataX.length > 0) {
+        this.totalY = this.totalY - this.dataY.shift();
+    }
+}
+
 var filter = [
     new FilteredCoordinate(defaultWindowSize),
     new FilteredCoordinate(defaultWindowSize),
@@ -169,10 +178,19 @@ async function predictionLoop() {
 
 var minConfidence = 0.5
 
+var evictionCounter = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 function filterPose(pose) {
     for (let i = 0; i < 17; i++) {
         if (pose.keypoints[i].score > minConfidence) {
             filter[i].update(pose.keypoints[i].position.x, pose.keypoints[i].position.y);
+            evictionCounter[i] = 0;
+        } else {
+            // If we get too many low confidence predictions for a point in a row, evict one entry from that point
+            evictionCounter[i]++;
+            if (evictionCounter[i] >= 5) {
+                filter[i].evict();
+                evictionCounter[i] == 0;
+            }
         }
         pose.keypoints[i].position.x = filter[i].getX() || 0;
         pose.keypoints[i].position.y = filter[i].getY() || 0;
@@ -189,9 +207,8 @@ function unpackPose(pose) {
     // console.log(pose.keypoints);
     for (let i = 0; i < 17; i++) {
         let keypoint = pose.keypoints[i];
-        // console.log(keypoint);
-        poseArr.push(keypoint.position.x / 1280.0); // Normalize for FaceTime HD Camera
-        poseArr.push(keypoint.position.y / 720.0);  // Normalize for FaceTime HD Camera
+        poseArr.push(Number(keypoint.position.x) / 1280.0); // Normalize for FaceTime HD Camera
+        poseArr.push(Number(keypoint.position.y) / 720.0);  // Normalize for FaceTime HD Camera
     }
     // console.log(poseArr);
     return poseArr;
@@ -201,7 +218,7 @@ function begin() {
     // Give sketching script access to the canvas/posenet
     sketch.setCanvasAndPoseNet(canvas, posenet);
     // Begin infinite prediction loop
-    setTimeout(predictionLoop, 1000);
+    setTimeout(predictionLoop, 100);
     // mirror webcam video feed
     context.translate(canvas.width, 0);
     context.scale(-1,1);

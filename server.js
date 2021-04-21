@@ -24,13 +24,18 @@ sendHeartbeat = function(arr) {
   var argsArr = [];
   for (let i = 0; i < 34; i++) {
     coord = arr[i];
-    argsArr.push({type: "float", value: coord});
+    argsArr.push({type: "float", value: coord || 0});
   }
   // console.log(argsArr);
-  buf = osc.toBuffer({
-    address: "/wek/inputs",
-    args: argsArr
-  });
+  try {
+    buf = osc.toBuffer({
+      address: "/wek/inputs",
+      args: argsArr
+    });
+  } catch (error) {
+    console.log(error, argsArr);
+  }
+
   return udp.send(buf, 0, buf.length, remotePort, "localhost");
 };
 
