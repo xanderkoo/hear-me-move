@@ -49,3 +49,5 @@ io.on('connection', function (socket) {
     sendHeartbeat(data);
   });
 });
+
+console.log("server listening on port " + 3000 + " and sending OSC data to port " + remotePort);
