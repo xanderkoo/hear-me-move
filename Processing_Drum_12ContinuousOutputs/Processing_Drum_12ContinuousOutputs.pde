@@ -63,6 +63,19 @@ boolean[] rim2Row = new boolean[16];
 boolean[] snare1Row = new boolean[16];
 boolean[] snare2Row = new boolean[16];
 
+float[] bass1Thresholds = new float[16];
+float[] bass2Thresholds = new float[16];
+float[] clapThresholds = new float[16];
+float[] hat1Thresholds = new float[16];
+float[] hat2Thresholds = new float[16];
+float[] kick1Thresholds = new float[16];
+float[] kick2Thresholds = new float[16];
+float[] ohatThresholds = new float[16];
+float[] rim1Thresholds = new float[16];
+float[] rim2Thresholds = new float[16];
+float[] snare1Thresholds = new float[16];
+float[] snare2Thresholds = new float[16];
+
 ArrayList<Rect> buttons = new ArrayList<Rect>();
 
 // randomSeed(4206);
@@ -194,6 +207,9 @@ void setup()
   rim2.patch( out );
   snare1.patch( out );
   snare2.patch( out );
+
+  // initialize the pattern for each sample
+  initDrums();
   
   for (int i = 0; i < 16; i++)
   {
@@ -275,26 +291,43 @@ void oscEvent(OscMessage theOscMessage) {
 }
 
 void updateDrums(float[] params) {
-
   for (int i = 0; i < 16; i++) {
-    bass1Row[i] = drumRowGenerator(params[0]);
-    bass2Row[i] = drumRowGenerator(params[1]);
-    clapRow[i] = drumRowGenerator(params[2]);
-    hat1Row[i] = drumRowGenerator(params[3]);
-    hat2Row[i] = drumRowGenerator(params[4]);
-    kick1Row[i] = drumRowGenerator(params[5]);
-    kick2Row[i] = drumRowGenerator(params[6]);
-    ohatRow[i] = drumRowGenerator(params[7]);
-    rim1Row[i] = drumRowGenerator(params[8]);
-    rim2Row[i] = drumRowGenerator(params[9]);
-    snare1Row[i] = drumRowGenerator(params[10]);
-    snare2Row[i] = drumRowGenerator(params[11]);
+    bass1Row[i]  = bass1Thresholds[i]  < params[0];
+    bass2Row[i]  = bass2Thresholds[i]  < params[1];
+    clapRow[i]   = clapThresholds[i]   < params[2];
+    hat1Row[i]   = hat1Thresholds[i]   < params[3];
+    hat2Row[i]   = hat2Thresholds[i]   < params[4];
+    kick1Row[i]  = kick1Thresholds[i]  < params[5];
+    kick2Row[i]  = kick2Thresholds[i]  < params[6];
+    ohatRow[i]   = ohatThresholds[i]   < params[7];
+    rim1Row[i]   = rim1Thresholds[i]   < params[8];
+    rim2Row[i]   = rim2Thresholds[i]   < params[9];
+    snare1Row[i] = snare1Thresholds[i] < params[10];
+    snare2Row[i] = snare2Thresholds[i] < params[11];
   }
 }
 
-boolean drumRowGenerator(float p) {
+void initDrums() {
+  randomSeed("Prince Dougie Fresh III".hashCode());
+  for (int i = 0; i < 16; i++) {
+    bass1Thresholds[i]  = drumRowThresholdGenerator();
+    bass2Thresholds[i]  = drumRowThresholdGenerator();
+    clapThresholds[i]   = drumRowThresholdGenerator();
+    hat1Thresholds[i]   = drumRowThresholdGenerator();
+    hat2Thresholds[i]   = drumRowThresholdGenerator();
+    kick1Thresholds[i]  = drumRowThresholdGenerator();
+    kick2Thresholds[i]  = drumRowThresholdGenerator();
+    ohatThresholds[i]   = drumRowThresholdGenerator();
+    rim1Thresholds[i]   = drumRowThresholdGenerator();
+    rim2Thresholds[i]   = drumRowThresholdGenerator();
+    snare1Thresholds[i] = drumRowThresholdGenerator();
+    snare2Thresholds[i] = drumRowThresholdGenerator();
+  }
+}
+
+float drumRowThresholdGenerator() {
   float r1 = random(1);
   float r2 = random(1);
-  if (r1 < .4) return false;
-  return r2 > p;
+  if (r1 < .3) return 1;
+  return r2 ;
 }
