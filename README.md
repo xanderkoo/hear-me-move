@@ -25,7 +25,7 @@ Go to http://localhost:3000
 
 ## Wekinator
 
-Open Wekinator, set it to listen to port 3333 for 51 inputs and 3 outputs going to port 12000 (you should change this depending on the desired output widget).
+Open Wekinator, set it to listen to port 3333 for 34 inputs and 3 outputs going to port 12000 (you should change this depending on the desired output widget).
 
 Open up one of these: http://www.wekinator.org/examples/#Processing_animation_audio or something
 

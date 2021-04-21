@@ -7,7 +7,9 @@ import * as sketch from "./sketch.js"
 //   inputResolution: {width: 360, height: 240},
 // });
 const net = await posenet.load();
+// Variable that holds the latest pose prediction
 var currentPose = null;
+var defaultWindowSize = 5;
 
 /**
  * CAMERA STUFF
@@ -64,47 +66,66 @@ navigator.getUserMedia(videoObj, function(stream) {
     video.play();
 }, errBack);
 
-// Variable that holds the latest pose prediction
-var pose = null;
-
 var FilteredCoordinate = function(windowSize) {
     this.dataX = [];
     this.dataY = [];
     this.totalX = 0;
     this.totalY = 0;
-    this.length = 0;
     this.maxLength = windowSize;
 }
 
 FilteredCoordinate.prototype.update = function (x, y) {
-    if (this.length >= this.maxLength) {
+    if (this.dataX.length >= this.maxLength) {
         this.dataX.push(x);
         this.totalX = this.totalX + x - this.dataX.shift();
-        this.dataY.push(y);
-        this.totalY = this.totalY + y - this.dataY.shift();
     } else {
         this.dataX.push(x);
         this.totalX += x;
+    }
+    if (this.dataY.length >= this.maxLength) {
+        this.dataY.push(y);
+        this.totalY = this.totalY + y - this.dataY.shift();
+    } else {
         this.dataY.push(y);
         this.totalY += y;
-        this.length++;
     }
 }
 
 FilteredCoordinate.prototype.getX = function() {
-    return this.totalX / this.length;
+    // console.log(this.dataX);
+    return this.totalX / this.dataX.length;
 }
 
 FilteredCoordinate.prototype.getY = function() {
-    return this.totalY / this.length;
+    return this.totalY / this.dataX.length;
 }
+
+var filter = [
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+    new FilteredCoordinate(defaultWindowSize),
+];
 
 /**
  * Animation frame callback for drawing the webcam feed + wireframe onto the canvas
  */
 function loop(){
     context.drawImage(video, crop.x, crop.y, crop.w, crop.h, 0, 0, canvas.width, canvas.height);
-    drawWireFrame(pose);
+    drawWireFrame(currentPose);
     raf = requestAnimationFrame(loop);
 }
 
@@ -114,20 +135,22 @@ function loop(){
  */
 function drawWireFrame(pose) {
     if (pose !== null) {
-        sketch.drawKeypoints(pose.keypoints, 0.5, context);
-        sketch.drawSkeleton(pose.keypoints, 0.5, context);
+        sketch.drawKeypoints(pose.keypoints, 0, context);
+        sketch.drawSkeleton(pose.keypoints, 0, context);
     }
 }
 
 var socket = io.connect('http://localhost:3000');
 
 async function estimatePose(e) {
-    pose = await net.estimateSinglePose(canvas, {
+    let pose = await net.estimateSinglePose(canvas, {
         flipHorizontal: false
     });
-    currentPose = pose;
     // console.log(pose);
-    let poseArr = unpackPose(pose);
+    let filteredPose = filterPose(pose);
+    currentPose = filteredPose;
+    let poseArr = unpackPose(filteredPose);
+
     // Send this to local server
     socket.emit('singlePose', poseArr);
     return pose;
@@ -144,6 +167,18 @@ async function predictionLoop() {
     }, 33);
 }
 
+function filterPose(pose) {
+    for (let i = 0; i < 17; i++) {
+        filter[i].update(pose.keypoints[i].position.x, pose.keypoints[i].position.y);
+        // console.log(filter[i].getX(), pose.keypoints[i].position.x);
+        // pose.keypoints[i].position.x = filter[i].getX();
+        // pose.keypoints[i].position.y = filter[i].getY();
+        pose.keypoints[i].position.x = filter[i].getX();
+        pose.keypoints[i].position.y = filter[i].getY();
+    }
+    return pose;
+}
+
 /**
  * @param {*} pose PoseNet single pose prediction 
  * @returns flattened array (length=51) of keypoints and confidence scores
@@ -156,7 +191,6 @@ function unpackPose(pose) {
         // console.log(keypoint);
         poseArr.push(keypoint.position.x / 1280.0); // Normalize for FaceTime HD Camera
         poseArr.push(keypoint.position.y / 720.0);  // Normalize for FaceTime HD Camera
-        poseArr.push(keypoint.score);
     }
     // console.log(poseArr);
     return poseArr;

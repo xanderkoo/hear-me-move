@@ -22,7 +22,7 @@ server.listen(3000);
 sendHeartbeat = function(arr) {
   var buf;
   var argsArr = [];
-  for (let i = 0; i < 51; i++) {
+  for (let i = 0; i < 34; i++) {
     coord = arr[i];
     argsArr.push({type: "float", value: coord});
   }
@@ -50,4 +50,4 @@ io.on('connection', function (socket) {
   });
 });
 
-console.log("server listening on port " + 3000 + " and sending OSC data to port " + remotePort);
+console.log("server listening on port " + 3000 + " and sending 34 OSC packets to port " + remotePort);
