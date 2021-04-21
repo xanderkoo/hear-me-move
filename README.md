@@ -37,7 +37,7 @@ Open up `Processing_Drum_12ContinuousOutputs/Processing_Drum_12ContinuousOutputs
 
 ## Wekinator
 
-Open Wekinator, set it to listen to port 3333 for 34 inputs and 3 outputs going to port 12000.
+Open Wekinator, set it to listen to port 3333 for 34 inputs, and 12 outputs going to port 12000.
 
 Go to View>Inputs to verify that it is working
 
