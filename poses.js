@@ -1,5 +1,11 @@
 import * as sketch from "./sketch.js"
 
+// const net = await posenet.load({
+//   architecture: 'MobileNetV1',
+//   outputStride: 16,
+//   multiplier: 0.75,
+//   inputResolution: {width: 360, height: 240},
+// });
 const net = await posenet.load();
 var currentPose = null;
 
@@ -61,6 +67,38 @@ navigator.getUserMedia(videoObj, function(stream) {
 // Variable that holds the latest pose prediction
 var pose = null;
 
+var FilteredCoordinate = function(windowSize) {
+    this.dataX = [];
+    this.dataY = [];
+    this.totalX = 0;
+    this.totalY = 0;
+    this.length = 0;
+    this.maxLength = windowSize;
+}
+
+FilteredCoordinate.prototype.update = function (x, y) {
+    if (this.length >= this.maxLength) {
+        this.dataX.push(x);
+        this.totalX = this.totalX + x - this.dataX.shift();
+        this.dataY.push(y);
+        this.totalY = this.totalY + y - this.dataY.shift();
+    } else {
+        this.dataX.push(x);
+        this.totalX += x;
+        this.dataY.push(y);
+        this.totalY += y;
+        this.length++;
+    }
+}
+
+FilteredCoordinate.prototype.getX = function() {
+    return this.totalX / this.length;
+}
+
+FilteredCoordinate.prototype.getY = function() {
+    return this.totalY / this.length;
+}
+
 /**
  * Animation frame callback for drawing the webcam feed + wireframe onto the canvas
  */
@@ -76,8 +114,8 @@ function loop(){
  */
 function drawWireFrame(pose) {
     if (pose !== null) {
-        sketch.drawKeypoints(pose.keypoints, 0, context);
-        sketch.drawSkeleton(pose.keypoints, 0, context);
+        sketch.drawKeypoints(pose.keypoints, 0.5, context);
+        sketch.drawSkeleton(pose.keypoints, 0.5, context);
     }
 }
 
