@@ -77,12 +77,16 @@ float[] snare1Thresholds = new float[16];
 float[] snare2Thresholds = new float[16];
 
 ArrayList<Rect> buttons = new ArrayList<Rect>();
+ArrayList<SampleTag> sampleTags = new ArrayList<SampleTag>();
 
-// randomSeed(4206);
-
-int bpm = 80;
+int bpm = 60;
 
 int beat; // which beat we're on
+
+int instructionsXOffset = 5;
+int instructionsYOffset = 15;
+int beatXOffset = 60;
+int beatYOffset = 100 + instructionsYOffset;
 
 // here's an Instrument implementation that we use 
 // to trigger Samplers every sixteenth note. 
@@ -152,24 +156,44 @@ class Rect
   
   public void mousePressed()
   {
-    /*if ( mouseX >= x && mouseX <= x+w && mouseY >= y && mouseY <= y+h )
+    if ( mouseX >= x && mouseX <= x+w && mouseY >= y && mouseY <= y+h )
     {
       steps[stepId] = !steps[stepId];
-    } */
+    }
   }
-  
- /* public void turnOn() {
-    steps[stepId] = true;
+}
+
+
+class SampleTag {
+  String displayName;
+  Sampler sample;
+  float x, y, w, h;
+  boolean textRed = false;
+
+  public SampleTag(int _x, int _y, String _displayName, Sampler _sample) {
+    displayName = _displayName;
+    sample = _sample;
+    x = _x;
+    y = _y;
+    h = 10;
+    w = textWidth(displayName);
   }
-  
-  public void turnOff() {
-    steps[stepId] = false;
-  } */
+
+  public void draw() {
+    fill(255, 0, 0);
+    text(displayName, x, y);
+  }
+
+  public void mousePressed() {
+    if ( mouseX >= x && mouseX <= x+w && mouseY >= y-2*h && mouseY <= y+h ) {
+      sample.trigger();
+    }
+  }
 }
 
 void setup()
 {
-  size(395, 625);
+  size(450, 700);
   
   //Initialize OSC communication
   oscP5 = new OscP5(this,12000); //listen for OSC messages on port 12000 (Wekinator default)
@@ -210,21 +234,35 @@ void setup()
 
   // initialize the pattern for each sample
   initDrums();
+
+  // initialize all of the tags for each sample
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20,     "BASS1",  bass1));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+50,  "BASS2",  bass2));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+100, "CLAP",   clap));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+150, "HAT1",   hat1));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+200, "HAT2",   hat2));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+250, "KICK1",  kick1));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+300, "KICK2",  kick2));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+350, "OHAT",   ohat));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+400, "RIM1",   rim1));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+450, "RIM2",   rim2));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+500, "SNARE1", snare1));
+  sampleTags.add(new SampleTag(beatXOffset-50, beatYOffset+20+550, "SNARE2", snare2));
   
   for (int i = 0; i < 16; i++)
   {
-    buttons.add( new Rect(10+i*24, 50,  bass1Row,  i ) );
-    buttons.add( new Rect(10+i*24, 100, bass2Row,  i ) );
-    buttons.add( new Rect(10+i*24, 150, clapRow,   i ) );
-    buttons.add( new Rect(10+i*24, 200, hat1Row,   i ) );
-    buttons.add( new Rect(10+i*24, 250, hat2Row,   i ) );
-    buttons.add( new Rect(10+i*24, 300, kick1Row,  i ) );
-    buttons.add( new Rect(10+i*24, 350, kick2Row,  i ) );
-    buttons.add( new Rect(10+i*24, 400, ohatRow,   i ) );
-    buttons.add( new Rect(10+i*24, 450, rim1Row,   i ) );
-    buttons.add( new Rect(10+i*24, 500, rim2Row,   i ) );
-    buttons.add( new Rect(10+i*24, 550, snare1Row, i ) );
-    buttons.add( new Rect(10+i*24, 600, snare2Row, i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset,     bass1Row,  i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+50,  bass2Row,  i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+100, clapRow,   i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+150, hat1Row,   i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+200, hat2Row,   i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+250, kick1Row,  i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+300, kick2Row,  i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+350, ohatRow,   i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+400, rim1Row,   i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+450, rim2Row,   i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+500, snare1Row, i ) );
+    buttons.add( new Rect(beatXOffset+i*24, beatYOffset+550, snare2Row, i ) );
   }
   
   beat = 0;
@@ -244,6 +282,10 @@ void draw()
   {
     buttons.get(i).draw();
   }
+
+  for (int i = 0; i < sampleTags.size(); ++i) {
+    sampleTags.get(i).draw();
+  }
   
   stroke(128);
   if ( beat % 4 == 0 )
@@ -256,12 +298,13 @@ void draw()
   }
     
   // beat marker    
-  rect(10+beat*24, 35, 14, 9);
+  rect(beatXOffset+beat*24, beatYOffset-15, 14, 9);
   
   fill(0, 255, 0);
-  text( "Use 12 continuous Wekinator outputs between 0 and 1", 5, 15 );
-  text( "Listening for /wek/outputs on port 12000", 5, 30 );
-  text("Use sliders in Wekinator to control density of each track", 5, 45 );
+  text( "Use 12 continuous Wekinator outputs between 0 and 1", instructionsXOffset, instructionsYOffset );
+  text( "Listening for /wek/outputs on port 12000", instructionsXOffset, instructionsYOffset+15 );
+  text( "Use sliders in Wekinator to control density of each track", instructionsXOffset, instructionsYOffset+30 );
+  text( "Click on the name of each sample to hear what it sounds like", instructionsXOffset, instructionsYOffset+45 );
 }
 
 void mousePressed()
@@ -269,6 +312,10 @@ void mousePressed()
   for(int i = 0; i < buttons.size(); ++i)
   {
     buttons.get(i).mousePressed();
+  }
+
+  for (int i = 0; i < sampleTags.size(); ++i){
+    sampleTags.get(i).mousePressed();
   }
 }
 
@@ -323,6 +370,9 @@ void initDrums() {
     snare1Thresholds[i] = drumRowThresholdGenerator();
     snare2Thresholds[i] = drumRowThresholdGenerator();
   }
+}
+
+void initSampleTags() {
 }
 
 float drumRowThresholdGenerator() {
