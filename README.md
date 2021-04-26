@@ -16,6 +16,7 @@ Credit:
 - [Wekinator](http://www.wekinator.org/downloads/)
 - [Processing](https://processing.org/download/)
 - [Minim](https://github.com/ddf/Minim) to be installed as a Processing library.
+- [oscP5](http://www.sojamo.de/libraries/oscP5) to be installed as a Processing library.
 
 ## Getting Started
 
