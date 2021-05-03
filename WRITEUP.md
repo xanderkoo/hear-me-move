@@ -30,4 +30,8 @@ Once we knew the data was being successfully communicated to Wekinator, we tried
 Another issue we ran into was tuning our PoseNet predictions so they would accurately estimate our poses. Originally, we displayed all pose predictions and had difficulties figuring out how to filter out low-quality predictions. Frames would jump between positions on the webcam canvas, and the input recognition was not very precise when we tried training in Wekinator. To solve this, we use a moving average of the predictions with an eviction policy to ensure data does not stay stuck on the buffer.
 
 
-## Description of Final Product
+## Results
+We each trained Wekinator to associate several poses with specific audio outputs. After training our model, we were able to run Wekinator to produce sounds based on our improvisation. If we were to start over again, we would have made the output handler more efficient; our current output kit uses a lot of the computer's processing power, which can make it difficult to run Wekinator and capture webcam data simultaneously. We also would aim to narrow our focus earlier on in the project. We spent a long time trying to emulate existing movement-related AI projects, but found that it was challenging to connect them all together. We would also spend more time experimenting with Wekinator and training different types of models, but didn't have as many opportunities given the time restraints. See below for our final product!
+
+
+
