@@ -33,5 +33,4 @@ Another issue we ran into was tuning our PoseNet predictions so they would accur
 ## Results
 We each trained Wekinator to associate several poses with specific audio outputs. After training our model, we were able to run Wekinator to produce sounds based on our improvisation. If we were to start over again, we would have made the output handler more efficient; our current output kit uses a lot of the computer's processing power, which can make it difficult to run Wekinator and capture webcam data simultaneously. We also would aim to narrow our focus earlier on in the project. We spent a long time trying to emulate existing movement-related AI projects, but found that it was challenging to connect them all together. We would also spend more time experimenting with Wekinator and training different types of models, but didn't have as many opportunities given the time restraints. See below for our final product!
 
-
-
+[![Hear Us MOve](https://user-images.githubusercontent.com/33564284/117105841-b2d25c00-ad33-11eb-9bad-aa66f1e06ab3.gif)](https://github.com/xanderkoo/hear-me-move/blob/main/Hear%20Us%20MOve.mp4?raw=true)
